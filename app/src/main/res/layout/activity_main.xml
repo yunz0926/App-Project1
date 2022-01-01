@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tab_Item1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tab1" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tab_Item2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tab2" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tab_Item3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tab3" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/tab"
+        android:id="@+id/contents">
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible"
+            android:id="@+id/contact"
+            tools:context=".MainActivity">
+
+            <Button
+                android:id="@+id/add_Btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:text="+"
+                android:textSize="20dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="end"
+                android:backgroundTint="#f7f7f7"
+                android:textColor="#1A77C8"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25dp"
+                android:layout_marginTop="30dp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:text="contact"/>
+
+            <EditText
+                android:id="@+id/edittext"
+                android:hint="search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:background="@drawable/layout_background2"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/main_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"/>
+        </LinearLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:id="@+id/gallery"
+            tools:context=".MainActivity">
+
+
+            <Button
+                android:id="@+id/btn_insert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Insert From Gallery"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:gravity="center"
+                app:layout_constraintTop_toTopOf="parent" />
+            <GridView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:columnWidth="90dp"
+                android:numColumns="3"
+                android:verticalSpacing="5dp"
+                android:horizontalSpacing="10dp"
+                android:stretchMode="columnWidth"
+                android:paddingBottom="130dp"
+                android:id="@+id/grid_view"
+                tools:context=".MainActivity"
+                app:layout_constraintTop_toBottomOf="@+id/btn_insert" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView android:id="@+id/full_image_view"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"/>
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            android:text="weather"
+            android:id="@+id/weather"
+            tools:context=".MainActivity">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#4CAF50"
+                android:gravity="center"
+                android:id="@+id/forecast1"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="타임스탬프1"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#4CAF50"
+                android:gravity="center"
+                android:id="@+id/forecast2"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/forecast1"
+                android:text="타임스탬프2"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#4CAF50"
+                android:gravity="center"
+                android:id="@+id/forecast3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/forecast2"
+                android:text="타임스탬프3"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#4CAF50"
+                android:gravity="center"
+                android:id="@+id/forecast4"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/forecast3"
+                android:text="타임스탬프4"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f7f7f7"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/item_cardview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        app:cardBackgroundColor="#f7f7f7"
+        android:textColor="#1A77C8"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/open_Btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:text="Go Back"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:backgroundTint="#f7f7f7"
+                android:textColor="#1A77C8"
+                />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                />
+
+            <Button
+                android:id="@+id/delete_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="delete"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:backgroundTint="#f7f7f7"
+                android:textColor="#C86B1A"
+                />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
+    <TextView
+        android:id="@+id/item_detail_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="170dp"
+        android:textSize="30dp"
+        android:layout_gravity="center"
+        android:text="name"
+        android:textColor="#000000"/>
+
+    <Button
+        android:id="@+id/call_Btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="call"
+        android:backgroundTint="#f7f7f7"
+        android:textColor="#000000"
+        />
+
+    <TextView
+        android:id="@+id/item_detail_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:paddingLeft="20dp"
+        android:text="number\n"
+        android:textSize="20dp"
+        android:textColor="#000000"
+        android:background="@drawable/layout_background"
+        />
+
+    <TextView
+        android:id="@+id/item_detail_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="20dp"
+        android:text="email\n"
+        android:textSize="20dp"
+        android:textColor="#000000"
+        android:background="@drawable/layout_background"
+        />
+
+    <TextView
+        android:id="@+id/item_detail_job"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="20dp"
+        android:text="job\n"
+        android:textSize="20dp"
+        android:textColor="#000000"
+        android:background="@drawable/layout_background"
+        />
+
+</LinearLayout>
