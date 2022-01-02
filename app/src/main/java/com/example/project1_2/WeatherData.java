@@ -1,19 +1,26 @@
 package com.example.project1_2;
 
 public class WeatherData {
-    private int temp;
+    private double temp;
     private String weather;
-    private String time;
+    private int time;
 
-    public void setTemp(int temp){
+    public WeatherData(double temp, String weather, int time){
         this.temp = temp;
-    }
-
-    public void setWeather(String weather){
         this.weather = weather;
-    }
-
-    public void setTime(String time){
         this.time = time;
     }
+
+    public double getTemp(){
+        return temp;
+    }
+
+    public String getWeather(){
+        return weather;
+    }
+
+    public int getTime(){
+        return time;
+    }
+
 }

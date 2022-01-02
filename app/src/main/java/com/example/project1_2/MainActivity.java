@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Display;
 import android.view.MenuItem;
@@ -24,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -44,8 +46,11 @@ import androidx.room.Room;
 
 import com.google.android.material.tabs.TabLayout;
 
+import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.w3c.dom.Text;
 
 import java.io.BufferedInputStream;
@@ -69,9 +74,33 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     private EditText editText;
     private RvAdapter adapter;
     public static ArrayList<Item> itemList = new ArrayList<>();
+    public static ArrayList<WeatherData> weatherList;
+    private int current_temp = -5;
+    private int three_temp = -7;
+    private int six_temp = -7;
+    private int nine_temp = -5;
+    private int twelve_temp = 0;
+    private int fifteen_temp = 4;
+    private int eighteen_temp = 1;
+    private int twenty_two_temp = -4;
+    private int temp = current_temp;
+    private int current_time = 23;
+    private int time = 0;
+
+
     LinearLayout contact;
     ConstraintLayout gallery;
     ConstraintLayout weather;
+    LinearLayout current;
+    LinearLayout three;
+    LinearLayout six;
+
+    private TextView current_time_text, three_time_text, six_time_text;
+    private ImageView current_cap, three_cap, six_cap;
+    private ImageView current_left_glove, current_right_glove;
+    private ImageView three_left_glove, three_right_glove;
+    private ImageView six_left_glove, six_right_glove;
+    private ImageView current_cloth, three_cloth, six_cloth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +129,9 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         contact = (LinearLayout) findViewById(R.id.contact) ;
         gallery = (ConstraintLayout) findViewById(R.id.gallery) ;
         weather = (ConstraintLayout) findViewById(R.id.weather) ;
+        current = (LinearLayout) findViewById(R.id.current) ;
+        three = (LinearLayout) findViewById(R.id.three) ;
+        six = (LinearLayout) findViewById(R.id.six) ;
 
 
         //탭 1
@@ -139,9 +171,79 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         bindGrid();
 
         //탭 3
-        /*
+
         checkPermission();
-        getWeatherData();*/
+        WeatherActivity weatherActivity = new WeatherActivity();
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        new Thread(){
+            public void run(){
+                weatherList = weatherActivity.getWeatherData(MainActivity.this, lm);
+            }
+        }.start();
+
+        current_time_text = findViewById(R.id.current_time);
+        three_time_text = findViewById(R.id.three_time);
+        six_time_text = findViewById(R.id.six_time);
+
+        current_cap = (ImageView) findViewById(R.id.current_cap);
+        three_cap = (ImageView) findViewById(R.id.three_cap);
+        six_cap = (ImageView) findViewById(R.id.six_cap);
+
+        current_left_glove = (ImageView) findViewById(R.id.current_left_glove);
+        current_right_glove = (ImageView) findViewById(R.id.current_right_glove);
+        three_left_glove = (ImageView) findViewById(R.id.three_left_glove);
+        three_right_glove = (ImageView) findViewById(R.id.three_right_glove);
+        six_left_glove = (ImageView) findViewById(R.id.six_left_glove);
+        six_right_glove = (ImageView) findViewById(R.id.six_right_glove);
+
+        current_cloth = (ImageView) findViewById(R.id.current_cloth);
+        three_cloth = (ImageView) findViewById(R.id.three_cloth);
+        six_cloth = (ImageView) findViewById(R.id.six_cloth);
+
+        current_time_text.setText(""+current_time);
+
+        if (temp < -5) {
+            current_cap.setVisibility(View.VISIBLE);
+            current_left_glove.setVisibility(View.VISIBLE);
+            current_right_glove.setVisibility(View.VISIBLE);
+            current_cloth.setVisibility(View.VISIBLE);
+
+            current_cap.setImageResource(R.drawable.cap);
+            current_left_glove.setImageResource(R.drawable.left_glove);
+            current_right_glove.setImageResource(R.drawable.right_glove);
+            current_cloth.setImageResource(R.drawable.paka);
+        }
+        else if (temp >= -5 && temp < 0) {
+            current_cap.setVisibility(View.INVISIBLE);
+            current_left_glove.setVisibility(View.INVISIBLE);
+            current_right_glove.setVisibility(View.INVISIBLE);
+            current_cloth.setVisibility(View.VISIBLE);
+
+            current_cloth.setImageResource(R.drawable.paka);
+        }
+        else if (temp > 0 && temp < 4) {
+            ;
+        }
+
+        TabLayout weather_tabLayout = (TabLayout) findViewById(R.id.weather_tab);
+        weather_tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                // TODO : process tab selection event.
+                int pos = tab.getPosition();
+                changeView2(pos);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                // do nothing
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                // do nothing
+            }
+        });
     }
 
     @Override
@@ -241,6 +343,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
             }
         }
     }
+
     public void checkPermission(){
         int hasFineLocationPermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
         int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -262,73 +365,6 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         }
     }
 
-    public void getWeatherData(){
-        final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        double longitude;
-        double latitude;
-
-        if(ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            String locationProvider = LocationManager.NETWORK_PROVIDER;
-            Location location = lm.getLastKnownLocation(locationProvider);
-
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
-
-            TextView text1 = (TextView) findViewById(R.id.forecast1);
-            text1.setText(Double.toString(longitude));
-            TextView text2 = (TextView) findViewById(R.id.forecast2);
-            text2.setText(Double.toString(latitude));
-            TextView text3 = (TextView) findViewById(R.id.forecast3);
-
-
-            String queryURL = "api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude + "&appid=260c05833f6d6608df17de1271ec4d50&cnt=5";
-            text3.setText(queryURL);
-            try{
-                URL url = new URL(queryURL);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                JSONObject json = new JSONObject(getStringFromInputStream(in));
-            } catch(MalformedURLException e){
-                System.err.println("Malformed URL");
-                e.printStackTrace();
-            } catch(JSONException e) {
-                System.err.println("JSON parsing error");
-                e.printStackTrace();
-            } catch(IOException e){
-                System.err.println("URL Connection failed");
-                e.printStackTrace();
-            }
-
-        }
-    }
-    private static String getStringFromInputStream(InputStream is){
-        BufferedReader br = null;
-        StringBuilder sb = new StringBuilder();
-
-        String line;
-        try{
-            br = new BufferedReader(new InputStreamReader(is));
-            while((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if(br != null) {
-                try {
-                    br.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return sb.toString();
-    }
-    /*
-    private WeatherData parseJSON(JSONObject json) throws JSONException {
-        WeatherData w = new WeatherData();
-
-    }*/
     public void changeView(int index) {
         switch (index) {
             case 0 :
@@ -347,6 +383,101 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 weather.setVisibility(View.VISIBLE) ;
                 break ;
 
+        }
+    }
+
+    public void changeView2(int index) {
+        switch (index) {
+            case 0 :
+                temp = current_temp;
+                time = current_time;
+                current_time_text.setText(""+time);
+                current.setVisibility(View.VISIBLE);
+                three.setVisibility(View.INVISIBLE) ;
+                six.setVisibility(View.INVISIBLE) ;
+                if (temp < -5) {
+                    current_cap.setVisibility(View.VISIBLE);
+                    current_left_glove.setVisibility(View.VISIBLE);
+                    current_right_glove.setVisibility(View.VISIBLE);
+                    current_cloth.setVisibility(View.VISIBLE);
+
+                    current_cap.setImageResource(R.drawable.cap);
+                    current_left_glove.setImageResource(R.drawable.left_glove);
+                    current_right_glove.setImageResource(R.drawable.right_glove);
+                    current_cloth.setImageResource(R.drawable.paka);
+                }
+                else if (temp > -5 && temp < 0) {
+                    current_cap.setVisibility(View.INVISIBLE);
+                    current_left_glove.setVisibility(View.INVISIBLE);
+                    current_right_glove.setVisibility(View.INVISIBLE);
+                    current_cloth.setVisibility(View.VISIBLE);
+
+                    current_cloth.setImageResource(R.drawable.paka);
+                }
+                else if (temp > 0 && temp < 4) {
+                    current_left_glove.setVisibility(View.INVISIBLE);
+                    current_right_glove.setVisibility(View.INVISIBLE);
+                }
+                break ;
+            case 1 :
+                temp = three_temp;
+                time = current_time+3;
+                if (time > 24) time -= 24;
+                current.setVisibility(View.INVISIBLE);
+                three.setVisibility(View.VISIBLE) ;
+                six.setVisibility(View.INVISIBLE) ;
+                three_time_text.setText(""+time);
+                if (temp < -5) {
+                    three_cap.setVisibility(View.VISIBLE);
+                    three_left_glove.setVisibility(View.VISIBLE);
+                    three_right_glove.setVisibility(View.VISIBLE);
+                    three_cloth.setVisibility(View.VISIBLE);
+
+                    three_cap.setImageResource(R.drawable.cap);
+                    three_left_glove.setImageResource(R.drawable.left_glove);
+                    three_right_glove.setImageResource(R.drawable.right_glove);
+                    three_cloth.setImageResource(R.drawable.paka);                }
+                else if (temp >= -5 && temp < 0) {
+                    three_left_glove.setVisibility(View.INVISIBLE);
+                    three_right_glove.setVisibility(View.INVISIBLE);
+                    three_cloth.setVisibility(View.VISIBLE);
+                    three_cloth.setImageResource(R.drawable.paka);
+                }
+                else if (temp >= 0 && temp < 4) {
+                    three_left_glove.setVisibility(View.INVISIBLE);
+                    three_right_glove.setVisibility(View.INVISIBLE);
+                }
+                break ;
+            case 2:
+                temp = six_temp;
+                time = current_time+6;
+                if (time > 24) time -= 24;
+                current.setVisibility(View.INVISIBLE);
+                three.setVisibility(View.INVISIBLE) ;
+                six.setVisibility(View.VISIBLE) ;
+                six_time_text.setText(""+time);
+                if (temp < -5) {
+                    six_cap.setVisibility(View.VISIBLE);
+                    six_left_glove.setVisibility(View.VISIBLE);
+                    six_right_glove.setVisibility(View.VISIBLE);
+                    six_cloth.setVisibility(View.VISIBLE);
+
+                    six_cap.setImageResource(R.drawable.cap);
+                    six_left_glove.setImageResource(R.drawable.left_glove);
+                    six_right_glove.setImageResource(R.drawable.right_glove);
+                    six_cloth.setImageResource(R.drawable.paka);
+                }
+                else if (temp >= -5 && temp < 0) {
+                    six_left_glove.setVisibility(View.INVISIBLE);
+                    six_right_glove.setVisibility(View.INVISIBLE);
+                    six_cloth.setVisibility(View.VISIBLE);
+                    six_cloth.setImageResource(R.drawable.paka);
+                }
+                else if (temp >= 0 && temp < 4) {
+                    six_left_glove.setVisibility(View.INVISIBLE);
+                    six_right_glove.setVisibility(View.INVISIBLE);
+                }
+                break ;
         }
     }
 }

@@ -137,41 +137,247 @@
             android:text="weather"
             android:id="@+id/weather"
             tools:context=".MainActivity">
-            <TextView
-                android:layout_width="wrap_content"
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/weather_tab"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#4CAF50"
-                android:gravity="center"
-                android:id="@+id/forecast1"
-                app:layout_constraintTop_toTopOf="parent"
-                android:text="타임스탬프1"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#4CAF50"
-                android:gravity="center"
-                android:id="@+id/forecast2"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/forecast1"
-                android:text="타임스탬프2"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#4CAF50"
-                android:gravity="center"
-                android:id="@+id/forecast3"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/forecast2"
-                android:text="타임스탬프3"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#4CAF50"
-                android:gravity="center"
-                android:id="@+id/forecast4"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/forecast3"
-                android:text="타임스탬프4"/>
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tab_current"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tab_3hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tab_6hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="6" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tab_9hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="9" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tab_12hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="12" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tab_15hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tab_18hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="18" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tab_21hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="21" />
+
+            </com.google.android.material.tabs.TabLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/current"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:textSize="25dp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:id="@+id/current_time"
+                    android:text="current_time"/>
+
+                <ImageView
+                    android:id="@+id/current_cap"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:visibility="invisible"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/current_left_glove"
+                        android:layout_marginTop="25dp"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:visibility="invisible"
+                        />
+
+                    <ImageView
+                        android:id="@+id/current_cloth"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:visibility="invisible"
+                        />
+
+                    <ImageView
+                        android:id="@+id/current_right_glove"
+                        android:layout_marginTop="25dp"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:visibility="invisible"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/three"
+                android:orientation="vertical"
+                android:visibility="invisible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:textSize="25dp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:id="@+id/three_time"
+                    android:text="three_time"/>
+
+                <ImageView
+                    android:id="@+id/three_cap"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:visibility="invisible"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/three_left_glove"
+                        android:layout_marginTop="25dp"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:visibility="invisible"
+                        />
+
+                    <ImageView
+                        android:id="@+id/three_cloth"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:visibility="invisible"
+                        />
+
+                    <ImageView
+                        android:id="@+id/three_right_glove"
+                        android:layout_marginTop="25dp"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:visibility="invisible"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/six"
+                android:orientation="vertical"
+                android:visibility="invisible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:textSize="25dp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:id="@+id/six_time"
+                    android:text="six_time"/>
+
+                <ImageView
+                    android:id="@+id/six_cap"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:visibility="invisible"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/six_left_glove"
+                        android:layout_marginTop="25dp"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:visibility="invisible"
+                        />
+
+                    <ImageView
+                        android:id="@+id/six_cloth"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:visibility="invisible"
+                        />
+
+                    <ImageView
+                        android:id="@+id/six_right_glove"
+                        android:layout_marginTop="25dp"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:visibility="invisible"
+                        />
+                </LinearLayout>
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
