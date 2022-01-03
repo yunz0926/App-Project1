@@ -159,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
         itemList.clear();
         selectData(TABLE_NAME);
+        adapter.notifyDataSetChanged();
 
         rv.setHasFixedSize(true);
         rv.setLayoutManager(llm);
@@ -172,13 +173,14 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         checkPermission();
         WeatherActivity weatherActivity = new WeatherActivity();
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        new Thread() {
+        Thread mThread = new Thread() {
             public void run() {
                 weatherList = weatherActivity.getWeatherData(MainActivity.this, lm);
                 GETDATA = true;
 
             }
-        }.start();
+        };
+        mThread.start();
 
         date_format = getTime();
         String[] date_split = date_format.split(" ");
@@ -195,6 +197,11 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         description = (TextView) findViewById(R.id.description);
 
         while (!GETDATA) {
+            try{
+                mThread.sleep(10);
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            }
         };
 
         int temp1 = weatherList.get(0).getTemp();
@@ -282,6 +289,11 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 // TODO : process tab selection event.
                 int pos = tab.getPosition();
                 while (!GETDATA) {
+                    try{
+                        mThread.sleep(10);
+                    } catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
                 };
                 time = pos * 3;
                 int temp1 = weatherList.get(time).getTemp();
@@ -528,7 +540,6 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 gallery.setVisibility(View.INVISIBLE);
                 weather.setVisibility(View.VISIBLE);
                 break;
-
         }
     }
 

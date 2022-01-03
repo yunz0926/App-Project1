@@ -7,4 +7,6 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <drawable name="select">#FF112D4E</drawable>
+    <drawable name="notselect">#FF716F81</drawable>
 </resources>

@@ -238,6 +238,7 @@
                     android:layout_gravity="center"
                     android:textAlignment="center"
                     android:id="@+id/time"
+                    android:fontFamily="@font/first"
                     />
 
                 <ImageView
@@ -302,6 +303,7 @@
                     android:textStyle="bold"
                     android:padding="10dp"
                     android:background="#ffffff"
+                    android:fontFamily="@font/first"
                     />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

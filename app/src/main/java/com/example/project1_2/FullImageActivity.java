@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class FullImageActivity extends Activity {
 
@@ -22,13 +23,17 @@ public class FullImageActivity extends Activity {
         int position = i.getExtras().getInt("id");
         com.example.project1_2.ImageAdapter imageAdapter = new com.example.project1_2.ImageAdapter(this, 360);
 
+        PhotoViewAttacher mAttacher;
         ImageView imageView = (ImageView) findViewById(R.id.full_image_view);
 
         if(imageAdapter.mThumblds[position] instanceof Integer){
             imageView.setImageResource((Integer)imageAdapter.mThumblds[position]);
+            mAttacher = new PhotoViewAttacher(imageView);
+
         }
         else if(imageAdapter.mThumblds[position] instanceof Uri){
             imageView.setImageURI((Uri)imageAdapter.mThumblds[position]);
+            mAttacher = new PhotoViewAttacher(imageView);
         }
 
     }
