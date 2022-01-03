@@ -14,7 +14,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -38,6 +40,9 @@ public class ItemActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_detail);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
 
         userDatabaseHelper = UserDatabaseHelper.getInstance(MainActivity.MainActivity_context);
         database = userDatabaseHelper.getWritableDatabase();
@@ -96,15 +101,17 @@ public class ItemActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
                 startActivity(intent);
+                Toast.makeText(v.getContext(), "go back", Toast.LENGTH_SHORT).show();
             }
         });
 
         Button deleteBtn = findViewById(R.id.delete_btn);
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                deleteData(name);
+                deleteData(name, number, email, job);
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
                 startActivity(intent);
+                Toast.makeText(v.getContext(), "deleted", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -125,7 +132,7 @@ public class ItemActivity extends AppCompatActivity {
 
      */
 
-    private void deleteData(String name) {
+    private void deleteData(String name, String number, String email, String job) {
         String sql = "SELECT * FROM " + "user";
         Cursor cursor = database.rawQuery(sql, null);
 
@@ -136,7 +143,7 @@ public class ItemActivity extends AppCompatActivity {
             String email_temp = cursor.getString(2);
             String job_temp = cursor.getString(3);
 
-            if (!name.equals(name_temp)) {
+            if (!name.equals(name_temp) || !number.equals(number_temp) || !email.equals(email_temp) || !job.equals(job_temp)) {
                 itemList_temp.add(new Item(name_temp, number_temp, email_temp, job_temp));
             }
         }

@@ -9,7 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AddActivity extends AppCompatActivity {
@@ -27,6 +29,9 @@ public class AddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_item);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
+
         userDatabaseHelper = UserDatabaseHelper.getInstance(MainActivity.MainActivity_context);
         database = userDatabaseHelper.getWritableDatabase();
 
@@ -42,9 +47,14 @@ public class AddActivity extends AppCompatActivity {
                 number = (String) add_number.getText().toString();
                 email = add_email.getText().toString();
                 job = add_job.getText().toString();
-                insertData("'" + name + "'", "'" + number + "'", "'" + email + "'", "'" + job + "'");
+                if (name.equals("")) {
+                    insertData("'" + number + "'", "'" + number + "'", "'" + email + "'", "'" + job + "'");
+                } else {
+                    insertData("'" + name + "'", "'" + number + "'", "'" + email + "'", "'" + job + "'");
+                }
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
                 startActivity(intent);
+                Toast.makeText(v.getContext(), "added", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -53,6 +63,7 @@ public class AddActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
                 startActivity(intent);
+                Toast.makeText(v.getContext(), "go back", Toast.LENGTH_SHORT).show();
             }
         });
     }

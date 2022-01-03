@@ -187,6 +187,94 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         String[] time_split = time_format.split(":");
         current_time = Integer.parseInt(time_split[0]);
 
+        time_text = findViewById(R.id.time);
+        cap = (ImageView) findViewById(R.id.cap);
+        left_glove = (ImageView) findViewById(R.id.left_glove);
+        right_glove = (ImageView) findViewById(R.id.right_glove);
+        cloth = (ImageView) findViewById(R.id.cloth);
+        description = (TextView) findViewById(R.id.description);
+
+        while (!GETDATA) {
+        };
+
+        int temp1 = weatherList.get(0).getTemp();
+        int temp2 = weatherList.get(1).getTemp();
+        int temp3 = weatherList.get(2).getTemp();
+
+        temp = Math.min(Math.min(temp1, temp2), temp3);
+
+        time_text.setText("Today\n" + (current_time) + "H");
+        description.setText(weatherList.get(0).getTemp() + "\u2103\n" + weatherList.get(0).getWeather());
+
+        if (temp < 0) {
+            cap.setVisibility(View.VISIBLE);
+            left_glove.setVisibility(View.VISIBLE);
+            right_glove.setVisibility(View.VISIBLE);
+            cloth.setVisibility(View.VISIBLE);
+
+            cap.setImageResource(R.drawable.cap);
+            left_glove.setImageResource(R.drawable.left_glove);
+            right_glove.setImageResource(R.drawable.right_glove);
+            cloth.setImageResource(R.drawable.paka);
+        } else if (temp >= 0 && temp < 5) {
+            cap.setVisibility(View.VISIBLE);
+            left_glove.setVisibility(View.INVISIBLE);
+            right_glove.setVisibility(View.INVISIBLE);
+            cloth.setVisibility(View.VISIBLE);
+
+            cap.setImageResource(R.drawable.white);
+            cloth.setImageResource(R.drawable.paka);
+        } else if (temp >= 5 && temp < 9) {
+            cap.setVisibility(View.INVISIBLE);
+            left_glove.setVisibility(View.INVISIBLE);
+            right_glove.setVisibility(View.INVISIBLE);
+            cloth.setVisibility(View.VISIBLE);
+
+            cloth.setImageResource(R.drawable.c5_8);
+        } else if (temp >= 9 && temp < 12) {
+            cap.setVisibility(View.INVISIBLE);
+            left_glove.setVisibility(View.INVISIBLE);
+            right_glove.setVisibility(View.INVISIBLE);
+            cloth.setVisibility(View.VISIBLE);
+
+            cloth.setImageResource(R.drawable.c9_11);
+        } else if (temp >= 12 && temp < 17) {
+            cap.setVisibility(View.INVISIBLE);
+            left_glove.setVisibility(View.INVISIBLE);
+            right_glove.setVisibility(View.INVISIBLE);
+            cloth.setVisibility(View.VISIBLE);
+
+            cloth.setImageResource(R.drawable.c12_16);
+        } else if (temp >= 17 && temp < 20) {
+            cap.setVisibility(View.INVISIBLE);
+            left_glove.setVisibility(View.INVISIBLE);
+            right_glove.setVisibility(View.INVISIBLE);
+            cloth.setVisibility(View.VISIBLE);
+
+            cloth.setImageResource(R.drawable.c17_19);
+        } else if (temp >= 20 && temp < 23) {
+            cap.setVisibility(View.INVISIBLE);
+            left_glove.setVisibility(View.INVISIBLE);
+            right_glove.setVisibility(View.INVISIBLE);
+            cloth.setVisibility(View.VISIBLE);
+
+            cloth.setImageResource(R.drawable.c20_22);
+        } else if (temp >= 23 && temp < 28) {
+            cap.setVisibility(View.INVISIBLE);
+            left_glove.setVisibility(View.INVISIBLE);
+            right_glove.setVisibility(View.INVISIBLE);
+            cloth.setVisibility(View.VISIBLE);
+
+            cloth.setImageResource(R.drawable.c23_27);
+        } else if (temp >= 28) {
+            cap.setVisibility(View.INVISIBLE);
+            left_glove.setVisibility(View.INVISIBLE);
+            right_glove.setVisibility(View.INVISIBLE);
+            cloth.setVisibility(View.VISIBLE);
+
+            cloth.setImageResource(R.drawable.c_28);
+        }
+
         TabLayout weather_tabLayout = (TabLayout) findViewById(R.id.weather_tab);
         weather_tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -201,13 +289,6 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 int temp3 = weatherList.get(time + 2).getTemp();
 
                 temp = Math.min(Math.min(temp1, temp2), temp3);
-
-                time_text = findViewById(R.id.time);
-                cap = (ImageView) findViewById(R.id.cap);
-                left_glove = (ImageView) findViewById(R.id.left_glove);
-                right_glove = (ImageView) findViewById(R.id.right_glove);
-                cloth = (ImageView) findViewById(R.id.cloth);
-                description = (TextView) findViewById(R.id.description);
 
                 if(current_time + time >= 24){
                     time_text.setText("Tomorrow\n" + (current_time + time - 24) + "H");
