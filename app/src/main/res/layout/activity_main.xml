@@ -222,7 +222,7 @@
                     android:layout_gravity="center"
                     android:textAlignment="center"
                     android:id="@+id/time"
-                    android:text="time"/>
+                    />
 
                 <ImageView
                     android:id="@+id/cap"

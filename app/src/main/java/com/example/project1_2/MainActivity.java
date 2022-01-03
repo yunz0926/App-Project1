@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                     cloth.setVisibility(View.VISIBLE);
 
                     cloth.setImageResource(R.drawable.c23_27);
-                } else if (temp >= 282) {
+                } else if (temp >= 28) {
                     cap.setVisibility(View.INVISIBLE);
                     left_glove.setVisibility(View.INVISIBLE);
                     right_glove.setVisibility(View.INVISIBLE);
