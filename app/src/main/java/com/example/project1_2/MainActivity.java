@@ -4,17 +4,14 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.location.Location;
 import android.location.LocationManager;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -33,36 +30,22 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.w3c.dom.Text;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
+
 
 
 public class MainActivity extends AppCompatActivity implements TextWatcher {
@@ -75,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     private RvAdapter adapter;
     public static ArrayList<Item> itemList = new ArrayList<>();
     public static ArrayList<WeatherData> weatherList;
+    private boolean GETDATA = false;
     private int current_temp = -5;
     private int three_temp = -7;
     private int six_temp = -7;
@@ -101,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     private ImageView three_left_glove, three_right_glove;
     private ImageView six_left_glove, six_right_glove;
     private ImageView current_cloth, three_cloth, six_cloth;
+    private TextView current_description;
+    private ImageView current_weathericon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,6 +164,8 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         new Thread(){
             public void run(){
                 weatherList = weatherActivity.getWeatherData(MainActivity.this, lm);
+                GETDATA = true;
+
             }
         }.start();
 
@@ -200,7 +188,30 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         three_cloth = (ImageView) findViewById(R.id.three_cloth);
         six_cloth = (ImageView) findViewById(R.id.six_cloth);
 
+        /*
+        current_weathericon = (ImageView) findViewById(R.id.current_weathericon);
+
+         */
+        current_description = (TextView) findViewById(R.id.current_description);
+
+
         current_time_text.setText(""+current_time);
+
+        while(!GETDATA){
+
+        };
+
+        if(weatherList.get(0).getWeather() == "Rain"){
+            current_description.setText("해당 시간대의 기온은 " + weatherList.get(0).getTemp() + "도입니다.\n비가 올 확률이 높으니 우산을 꼭 챙기세요! ");
+        }
+        else {
+            current_description.setText("해당 시간대의 기온은 " + weatherList.get(0).getTemp() + "도입니다.\n비가 올 확률이 높으니 우산을 꼭 챙기세요! ");
+        }
+
+        String resName = "@drawable/w" + weatherList.get(0).getIconUrl();
+        System.out.println("resName: " + resName);
+        int resId = getResources().getIdentifier(resName, "drawable", this.getPackageName());
+        /*current_weathericon.setImageResource(resId);*/
 
         if (temp < -5) {
             current_cap.setVisibility(View.VISIBLE);
@@ -214,11 +225,12 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
             current_cloth.setImageResource(R.drawable.paka);
         }
         else if (temp >= -5 && temp < 0) {
-            current_cap.setVisibility(View.INVISIBLE);
+            current_cap.setVisibility(View.VISIBLE);
             current_left_glove.setVisibility(View.INVISIBLE);
             current_right_glove.setVisibility(View.INVISIBLE);
             current_cloth.setVisibility(View.VISIBLE);
 
+            current_cap.setImageResource(R.drawable.white);
             current_cloth.setImageResource(R.drawable.paka);
         }
         else if (temp > 0 && temp < 4) {

@@ -38,7 +38,7 @@ public class WeatherActivity extends Activity {
         super.onCreate(savedInstanceState);
     }
 
-    public ArrayList<WeatherData> getWeatherData(Context c, LocationManager lm){
+    public synchronized ArrayList<WeatherData> getWeatherData(Context c, LocationManager lm){
         double longitude;
         double latitude;
 
@@ -119,8 +119,10 @@ public class WeatherActivity extends Activity {
                 org.json.JSONObject jo = (org.json.JSONObject) obj;
                 int temp = jo.getInt("temp");
                 String weather = jo.getJSONArray("weather").getJSONObject(0).getString("main");
+                String iconUrl = jo.getJSONArray("weather").getJSONObject(0).getString("icon");
+                System.out.println(iconUrl);
 
-                WeatherData w = new WeatherData((double)temp - 273.15, weather, i);
+                WeatherData w = new WeatherData(temp - 273, weather, i, iconUrl);
                 System.out.println(w.getTime() +": temp ->" + w.getTemp() + " weather -> " + w.getWeather());
                 dataList.add(w);
             }
