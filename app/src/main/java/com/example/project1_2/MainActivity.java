@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -29,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -44,11 +47,16 @@ import com.google.android.material.tabs.TabLayout;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity implements TextWatcher {
+    private UserDatabaseHelper userDatabaseHelper;
+    public static final String TABLE_NAME = "user";
+    SQLiteDatabase database;
+
     private final int PICK_IMAGE = 1111;
     private ImageAdapter imageAdapter;
     private RecyclerView rv;
@@ -59,33 +67,29 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     public static ArrayList<Item> itemList = new ArrayList<>();
     public static ArrayList<WeatherData> weatherList;
     private boolean GETDATA = false;
-    private int current_temp = -5;
-    private int three_temp = -7;
-    private int six_temp = -7;
-    private int nine_temp = -5;
-    private int twelve_temp = 0;
-    private int fifteen_temp = 4;
-    private int eighteen_temp = 1;
-    private int twenty_two_temp = -4;
-    private int temp = current_temp;
-    private int current_time = 23;
+    private int temp;
     private int time = 0;
+    private int current_time;
+    private String weatherMain;
 
+    private String date_format;
+    private String time_format;
+    private String date;
+
+    long mNow;
+    Date mDate;
+    SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+
+
+    public static Context MainActivity_context;
 
     LinearLayout contact;
     ConstraintLayout gallery;
     ConstraintLayout weather;
-    LinearLayout current;
-    LinearLayout three;
-    LinearLayout six;
+    LinearLayout weather_content;
 
-    private TextView current_time_text, three_time_text, six_time_text;
-    private ImageView current_cap, three_cap, six_cap;
-    private ImageView current_left_glove, current_right_glove;
-    private ImageView three_left_glove, three_right_glove;
-    private ImageView six_left_glove, six_right_glove;
-    private ImageView current_cloth, three_cloth, six_cloth;
-    private TextView current_description;
+    private TextView time_text, description;
+    private ImageView cap, left_glove, right_glove, cloth;
     private ImageView current_weathericon;
 
     @Override
@@ -93,7 +97,12 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab) ;
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
+
+        MainActivity_context = getApplicationContext();
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -111,21 +120,17 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
             public void onTabReselected(TabLayout.Tab tab) {
                 // do nothing
             }
-        }) ;
-        contact = (LinearLayout) findViewById(R.id.contact) ;
-        gallery = (ConstraintLayout) findViewById(R.id.gallery) ;
-        weather = (ConstraintLayout) findViewById(R.id.weather) ;
-        current = (LinearLayout) findViewById(R.id.current) ;
-        three = (LinearLayout) findViewById(R.id.three) ;
-        six = (LinearLayout) findViewById(R.id.six) ;
+        });
+        contact = (LinearLayout) findViewById(R.id.contact);
+        gallery = (ConstraintLayout) findViewById(R.id.gallery);
+        weather = (ConstraintLayout) findViewById(R.id.weather);
+        weather_content = (LinearLayout) findViewById(R.id.weather_content);
 
 
         //탭 1
-        contact.setOnTouchListener(new View.OnTouchListener()
-        {
+        contact.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event)
-            {
+            public boolean onTouch(View v, MotionEvent event) {
                 hideKeyboard();
                 return false;
             }
@@ -138,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         llm = new LinearLayoutManager(this);
         adapter = new RvAdapter(this, itemList);
 
-        editText = (EditText)findViewById(R.id.edittext);
+        editText = (EditText) findViewById(R.id.edittext);
         editText.addTextChangedListener(this);
 
         Button add_Btn = (Button) findViewById(R.id.add_Btn);
@@ -148,6 +153,12 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 startActivity(intent);
             }
         });
+
+        userDatabaseHelper = UserDatabaseHelper.getInstance(this);
+        database = userDatabaseHelper.getWritableDatabase();
+
+        itemList.clear();
+        selectData(TABLE_NAME);
 
         rv.setHasFixedSize(true);
         rv.setLayoutManager(llm);
@@ -161,81 +172,20 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         checkPermission();
         WeatherActivity weatherActivity = new WeatherActivity();
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        new Thread(){
-            public void run(){
+        new Thread() {
+            public void run() {
                 weatherList = weatherActivity.getWeatherData(MainActivity.this, lm);
                 GETDATA = true;
 
             }
         }.start();
 
-        current_time_text = findViewById(R.id.current_time);
-        three_time_text = findViewById(R.id.three_time);
-        six_time_text = findViewById(R.id.six_time);
+        date_format = getTime();
+        String[] date_split = date_format.split(" ");
 
-        current_cap = (ImageView) findViewById(R.id.current_cap);
-        three_cap = (ImageView) findViewById(R.id.three_cap);
-        six_cap = (ImageView) findViewById(R.id.six_cap);
-
-        current_left_glove = (ImageView) findViewById(R.id.current_left_glove);
-        current_right_glove = (ImageView) findViewById(R.id.current_right_glove);
-        three_left_glove = (ImageView) findViewById(R.id.three_left_glove);
-        three_right_glove = (ImageView) findViewById(R.id.three_right_glove);
-        six_left_glove = (ImageView) findViewById(R.id.six_left_glove);
-        six_right_glove = (ImageView) findViewById(R.id.six_right_glove);
-
-        current_cloth = (ImageView) findViewById(R.id.current_cloth);
-        three_cloth = (ImageView) findViewById(R.id.three_cloth);
-        six_cloth = (ImageView) findViewById(R.id.six_cloth);
-
-        /*
-        current_weathericon = (ImageView) findViewById(R.id.current_weathericon);
-
-         */
-        current_description = (TextView) findViewById(R.id.current_description);
-
-
-        current_time_text.setText(""+current_time);
-
-        while(!GETDATA){
-
-        };
-
-        if(weatherList.get(0).getWeather() == "Rain"){
-            current_description.setText("해당 시간대의 기온은 " + weatherList.get(0).getTemp() + "도입니다.\n비가 올 확률이 높으니 우산을 꼭 챙기세요! ");
-        }
-        else {
-            current_description.setText("해당 시간대의 기온은 " + weatherList.get(0).getTemp() + "도입니다.\n비가 올 확률이 높으니 우산을 꼭 챙기세요! ");
-        }
-
-        String resName = "@drawable/w" + weatherList.get(0).getIconUrl();
-        System.out.println("resName: " + resName);
-        int resId = getResources().getIdentifier(resName, "drawable", this.getPackageName());
-        /*current_weathericon.setImageResource(resId);*/
-
-        if (temp < -5) {
-            current_cap.setVisibility(View.VISIBLE);
-            current_left_glove.setVisibility(View.VISIBLE);
-            current_right_glove.setVisibility(View.VISIBLE);
-            current_cloth.setVisibility(View.VISIBLE);
-
-            current_cap.setImageResource(R.drawable.cap);
-            current_left_glove.setImageResource(R.drawable.left_glove);
-            current_right_glove.setImageResource(R.drawable.right_glove);
-            current_cloth.setImageResource(R.drawable.paka);
-        }
-        else if (temp >= -5 && temp < 0) {
-            current_cap.setVisibility(View.VISIBLE);
-            current_left_glove.setVisibility(View.INVISIBLE);
-            current_right_glove.setVisibility(View.INVISIBLE);
-            current_cloth.setVisibility(View.VISIBLE);
-
-            current_cap.setImageResource(R.drawable.white);
-            current_cloth.setImageResource(R.drawable.paka);
-        }
-        else if (temp > 0 && temp < 4) {
-            ;
-        }
+        time_format = date_split[1];
+        String[] time_split = time_format.split(":");
+        current_time = Integer.parseInt(time_split[0]);
 
         TabLayout weather_tabLayout = (TabLayout) findViewById(R.id.weather_tab);
         weather_tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -243,7 +193,104 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
             public void onTabSelected(TabLayout.Tab tab) {
                 // TODO : process tab selection event.
                 int pos = tab.getPosition();
-                changeView2(pos);
+                while (!GETDATA) {
+                };
+                time = pos * 3;
+                int temp1 = weatherList.get(time).getTemp();
+                int temp2 = weatherList.get(time + 1).getTemp();
+                int temp3 = weatherList.get(time + 2).getTemp();
+
+                temp = Math.min(Math.min(temp1, temp2), temp3);
+
+                time_text = findViewById(R.id.time);
+                cap = (ImageView) findViewById(R.id.cap);
+                left_glove = (ImageView) findViewById(R.id.left_glove);
+                right_glove = (ImageView) findViewById(R.id.right_glove);
+                cloth = (ImageView) findViewById(R.id.cloth);
+                description = (TextView) findViewById(R.id.description);
+
+                if(current_time + time >= 24){
+                    time_text.setText("Tomorrow\n" + (current_time + time - 24) + "H");
+                }
+                else{
+                    time_text.setText("Today\n" + (current_time + time) + "H");
+                }
+                if (weatherList.get(time).getWeather() == "Rain") {
+                    description.setText(weatherList.get(time).getTemp() + "\u2103\n" + weatherList.get(time).getWeather());
+                } else {
+                    description.setText(weatherList.get(time).getTemp() + "\u2103\n" + weatherList.get(time).getWeather());
+                }
+
+                if (temp < 0) {
+                    cap.setVisibility(View.VISIBLE);
+                    left_glove.setVisibility(View.VISIBLE);
+                    right_glove.setVisibility(View.VISIBLE);
+                    cloth.setVisibility(View.VISIBLE);
+
+                    cap.setImageResource(R.drawable.cap);
+                    left_glove.setImageResource(R.drawable.left_glove);
+                    right_glove.setImageResource(R.drawable.right_glove);
+                    cloth.setImageResource(R.drawable.paka);
+                } else if (temp >= 0 && temp < 5) {
+                    cap.setVisibility(View.VISIBLE);
+                    left_glove.setVisibility(View.INVISIBLE);
+                    right_glove.setVisibility(View.INVISIBLE);
+                    cloth.setVisibility(View.VISIBLE);
+
+                    cap.setImageResource(R.drawable.white);
+                    cloth.setImageResource(R.drawable.paka);
+                } else if (temp >= 5 && temp < 9) {
+                    cap.setVisibility(View.INVISIBLE);
+                    left_glove.setVisibility(View.INVISIBLE);
+                    right_glove.setVisibility(View.INVISIBLE);
+                    cloth.setVisibility(View.VISIBLE);
+
+                    cloth.setImageResource(R.drawable.c5_8);
+                } else if (temp >= 9 && temp < 12) {
+                    cap.setVisibility(View.INVISIBLE);
+                    left_glove.setVisibility(View.INVISIBLE);
+                    right_glove.setVisibility(View.INVISIBLE);
+                    cloth.setVisibility(View.VISIBLE);
+
+                    cloth.setImageResource(R.drawable.c9_11);
+                } else if (temp >= 12 && temp < 17) {
+                    cap.setVisibility(View.INVISIBLE);
+                    left_glove.setVisibility(View.INVISIBLE);
+                    right_glove.setVisibility(View.INVISIBLE);
+                    cloth.setVisibility(View.VISIBLE);
+
+                    cloth.setImageResource(R.drawable.c12_16);
+                } else if (temp >= 17 && temp < 20) {
+                    cap.setVisibility(View.INVISIBLE);
+                    left_glove.setVisibility(View.INVISIBLE);
+                    right_glove.setVisibility(View.INVISIBLE);
+                    cloth.setVisibility(View.VISIBLE);
+
+                    cloth.setImageResource(R.drawable.c17_19);
+                } else if (temp >= 20 && temp < 23) {
+                    cap.setVisibility(View.INVISIBLE);
+                    left_glove.setVisibility(View.INVISIBLE);
+                    right_glove.setVisibility(View.INVISIBLE);
+                    cloth.setVisibility(View.VISIBLE);
+
+                    cloth.setImageResource(R.drawable.c20_22);
+                } else if (temp >= 23 && temp < 28) {
+                    cap.setVisibility(View.INVISIBLE);
+                    left_glove.setVisibility(View.INVISIBLE);
+                    right_glove.setVisibility(View.INVISIBLE);
+                    cloth.setVisibility(View.VISIBLE);
+
+                    cloth.setImageResource(R.drawable.c23_27);
+                } else if (temp >= 282) {
+                    cap.setVisibility(View.INVISIBLE);
+                    left_glove.setVisibility(View.INVISIBLE);
+                    right_glove.setVisibility(View.INVISIBLE);
+                    cloth.setVisibility(View.VISIBLE);
+
+                    cloth.setImageResource(R.drawable.c_28);
+                }
+
+
             }
 
             @Override
@@ -256,6 +303,11 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 // do nothing
             }
         });
+    }
+    private String getTime() {
+        mNow = System.currentTimeMillis();
+        mDate = new Date(mNow);
+        return mFormat.format(mDate);
     }
 
     @Override
@@ -273,14 +325,13 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
     }
 
-    void hideKeyboard()
-    {
+    void hideKeyboard() {
         InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
-    public void bindGrid(){
-        Display display = ((WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+    public void bindGrid() {
+        Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int displayWidth = size.x;
@@ -307,7 +358,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
-                        switch(menuItem.getItemId()){
+                        switch (menuItem.getItemId()) {
                             case R.id.action_delete:
                                 imageAdapter.deleteItem(position);
                                 imageAdapter.notifyDataSetChanged();
@@ -324,7 +375,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
             }
         });
 
-        Button btn_insert = (Button)findViewById(R.id.btn_insert);
+        Button btn_insert = (Button) findViewById(R.id.btn_insert);
         btn_insert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -333,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                if(intent.resolveActivity(getApplicationContext().getPackageManager()) != null){
+                if (intent.resolveActivity(getApplicationContext().getPackageManager()) != null) {
                     startActivityForResult(intent, PICK_IMAGE);
                 }
             }
@@ -344,11 +395,11 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if(requestCode == PICK_IMAGE){
-            if(resultCode == Activity.RESULT_OK){
+        if (requestCode == PICK_IMAGE) {
+            if (resultCode == Activity.RESULT_OK) {
                 Uri imageUri = intent.getData();
                 if (imageUri != null) {
-                    imageAdapter.addItem((Object)imageUri);
+                    imageAdapter.addItem((Object) imageUri);
                     imageAdapter.notifyDataSetChanged();
 
                 }
@@ -356,11 +407,11 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         }
     }
 
-    public void checkPermission(){
+    public void checkPermission() {
         int hasFineLocationPermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
         int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION);
         final int PERMISSIONS_REQUEST_CODE = 100;
-        String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+        String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
 
         //퍼미션 요청을 허용한 적 없는 경우
@@ -379,117 +430,41 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
     public void changeView(int index) {
         switch (index) {
-            case 0 :
-                contact.setVisibility(View.VISIBLE) ;
-                gallery.setVisibility(View.INVISIBLE) ;
-                weather.setVisibility(View.INVISIBLE) ;
-                break ;
-            case 1 :
-                contact.setVisibility(View.INVISIBLE) ;
-                gallery.setVisibility(View.VISIBLE) ;
-                weather.setVisibility(View.INVISIBLE) ;
-                break ;
-            case 2 :
-                contact.setVisibility(View.INVISIBLE) ;
-                gallery.setVisibility(View.INVISIBLE) ;
-                weather.setVisibility(View.VISIBLE) ;
-                break ;
+            case 0:
+                contact.setVisibility(View.VISIBLE);
+                gallery.setVisibility(View.INVISIBLE);
+                weather.setVisibility(View.INVISIBLE);
+                break;
+            case 1:
+                contact.setVisibility(View.INVISIBLE);
+                gallery.setVisibility(View.VISIBLE);
+                weather.setVisibility(View.INVISIBLE);
+                break;
+            case 2:
+                while (!GETDATA) {
+                };
+                contact.setVisibility(View.INVISIBLE);
+                gallery.setVisibility(View.INVISIBLE);
+                weather.setVisibility(View.VISIBLE);
+                break;
 
         }
     }
 
-    public void changeView2(int index) {
-        switch (index) {
-            case 0 :
-                temp = current_temp;
-                time = current_time;
-                current_time_text.setText(""+time);
-                current.setVisibility(View.VISIBLE);
-                three.setVisibility(View.INVISIBLE) ;
-                six.setVisibility(View.INVISIBLE) ;
-                if (temp < -5) {
-                    current_cap.setVisibility(View.VISIBLE);
-                    current_left_glove.setVisibility(View.VISIBLE);
-                    current_right_glove.setVisibility(View.VISIBLE);
-                    current_cloth.setVisibility(View.VISIBLE);
+    private void selectData(String tableName) {
+        if (database != null) {
+            String sql = "SELECT * FROM " + tableName;
+            Cursor cursor = database.rawQuery(sql, null);
 
-                    current_cap.setImageResource(R.drawable.cap);
-                    current_left_glove.setImageResource(R.drawable.left_glove);
-                    current_right_glove.setImageResource(R.drawable.right_glove);
-                    current_cloth.setImageResource(R.drawable.paka);
-                }
-                else if (temp > -5 && temp < 0) {
-                    current_cap.setVisibility(View.INVISIBLE);
-                    current_left_glove.setVisibility(View.INVISIBLE);
-                    current_right_glove.setVisibility(View.INVISIBLE);
-                    current_cloth.setVisibility(View.VISIBLE);
-
-                    current_cloth.setImageResource(R.drawable.paka);
-                }
-                else if (temp > 0 && temp < 4) {
-                    current_left_glove.setVisibility(View.INVISIBLE);
-                    current_right_glove.setVisibility(View.INVISIBLE);
-                }
-                break ;
-            case 1 :
-                temp = three_temp;
-                time = current_time+3;
-                if (time > 24) time -= 24;
-                current.setVisibility(View.INVISIBLE);
-                three.setVisibility(View.VISIBLE) ;
-                six.setVisibility(View.INVISIBLE) ;
-                three_time_text.setText(""+time);
-                if (temp < -5) {
-                    three_cap.setVisibility(View.VISIBLE);
-                    three_left_glove.setVisibility(View.VISIBLE);
-                    three_right_glove.setVisibility(View.VISIBLE);
-                    three_cloth.setVisibility(View.VISIBLE);
-
-                    three_cap.setImageResource(R.drawable.cap);
-                    three_left_glove.setImageResource(R.drawable.left_glove);
-                    three_right_glove.setImageResource(R.drawable.right_glove);
-                    three_cloth.setImageResource(R.drawable.paka);                }
-                else if (temp >= -5 && temp < 0) {
-                    three_left_glove.setVisibility(View.INVISIBLE);
-                    three_right_glove.setVisibility(View.INVISIBLE);
-                    three_cloth.setVisibility(View.VISIBLE);
-                    three_cloth.setImageResource(R.drawable.paka);
-                }
-                else if (temp >= 0 && temp < 4) {
-                    three_left_glove.setVisibility(View.INVISIBLE);
-                    three_right_glove.setVisibility(View.INVISIBLE);
-                }
-                break ;
-            case 2:
-                temp = six_temp;
-                time = current_time+6;
-                if (time > 24) time -= 24;
-                current.setVisibility(View.INVISIBLE);
-                three.setVisibility(View.INVISIBLE) ;
-                six.setVisibility(View.VISIBLE) ;
-                six_time_text.setText(""+time);
-                if (temp < -5) {
-                    six_cap.setVisibility(View.VISIBLE);
-                    six_left_glove.setVisibility(View.VISIBLE);
-                    six_right_glove.setVisibility(View.VISIBLE);
-                    six_cloth.setVisibility(View.VISIBLE);
-
-                    six_cap.setImageResource(R.drawable.cap);
-                    six_left_glove.setImageResource(R.drawable.left_glove);
-                    six_right_glove.setImageResource(R.drawable.right_glove);
-                    six_cloth.setImageResource(R.drawable.paka);
-                }
-                else if (temp >= -5 && temp < 0) {
-                    six_left_glove.setVisibility(View.INVISIBLE);
-                    six_right_glove.setVisibility(View.INVISIBLE);
-                    six_cloth.setVisibility(View.VISIBLE);
-                    six_cloth.setImageResource(R.drawable.paka);
-                }
-                else if (temp >= 0 && temp < 4) {
-                    six_left_glove.setVisibility(View.INVISIBLE);
-                    six_right_glove.setVisibility(View.INVISIBLE);
-                }
-                break ;
+            for (int i = 0; i < cursor.getCount(); i++) {
+                cursor.moveToNext();
+                String name = cursor.getString(0);
+                String number = cursor.getString(1);
+                String email = cursor.getString(2);
+                String job = cursor.getString(3);
+                itemList.add(new Item(name, number, email, job));
+            }
+            cursor.close();
         }
     }
 }

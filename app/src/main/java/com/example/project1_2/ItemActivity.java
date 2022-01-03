@@ -1,6 +1,8 @@
 package com.example.project1_2;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,9 +29,18 @@ public class ItemActivity extends AppCompatActivity {
     private String job;
     private TextView text_name, text_number, text_email, text_job;
 
+    public static ArrayList<Item> itemList_temp = new ArrayList<>();
+
+    private UserDatabaseHelper userDatabaseHelper;
+    public static final String TABLE_NAME = "user";
+    SQLiteDatabase database;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_detail);
+
+        userDatabaseHelper = UserDatabaseHelper.getInstance(MainActivity.MainActivity_context);
+        database = userDatabaseHelper.getWritableDatabase();
 
         intent = getIntent();
         name = intent.getStringExtra("name");
@@ -91,15 +102,7 @@ public class ItemActivity extends AppCompatActivity {
         Button deleteBtn = findViewById(R.id.delete_btn);
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Item findperson = null;
-                for (Item p : MainActivity.itemList) {
-                    name2 = (String) p.getItem_name();
-                    if (name2.equals(name)) {
-                        findperson = p;
-                        break;
-                    }
-                }
-                MainActivity.itemList.remove(findperson);
+                deleteData(name);
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
                 startActivity(intent);
             }
@@ -113,4 +116,38 @@ public class ItemActivity extends AppCompatActivity {
             }
         });
     }
+
+    /*
+    private void deleteData(String name) {
+        String sql = "DELETE FROM user name=" + "'" + name + "'";
+        database.execSQL(sql);
+    }
+
+     */
+
+    private void deleteData(String name) {
+        String sql = "SELECT * FROM " + "user";
+        Cursor cursor = database.rawQuery(sql, null);
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+            cursor.moveToNext();
+            String name_temp = cursor.getString(0);
+            String number_temp = cursor.getString(1);
+            String email_temp = cursor.getString(2);
+            String job_temp = cursor.getString(3);
+
+            if (!name.equals(name_temp)) {
+                itemList_temp.add(new Item(name_temp, number_temp, email_temp, job_temp));
+            }
+        }
+
+        database.execSQL("DELETE FROM "+"user");
+
+        for (Item item : itemList_temp) {
+            String sql2 = "INSERT INTO user VALUES(" + "'" +  item.getItem_name() + "'" + ", " + "'" + item.getItem_number() + "'" + ", " + "'" + item.getItem_email() + "'" + ", " + "'" + item.getItem_job() + "'" + ")";
+            database.execSQL(sql2);
+        }
+        itemList_temp.clear();
+    }
+
 }

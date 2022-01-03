@@ -1,6 +1,8 @@
 package com.example.project1_2;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -17,9 +19,16 @@ public class AddActivity extends AppCompatActivity {
     private String email;
     private String job;
 
+    private UserDatabaseHelper userDatabaseHelper;
+    public static final String TABLE_NAME = "user";
+    SQLiteDatabase database;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_item);
+
+        userDatabaseHelper = UserDatabaseHelper.getInstance(MainActivity.MainActivity_context);
+        database = userDatabaseHelper.getWritableDatabase();
 
         EditText add_name = (EditText) findViewById(R.id.add_name);
         EditText add_number = (EditText) findViewById(R.id.add_number);
@@ -33,7 +42,7 @@ public class AddActivity extends AppCompatActivity {
                 number = (String) add_number.getText().toString();
                 email = add_email.getText().toString();
                 job = add_job.getText().toString();
-                MainActivity.itemList.add(new Item(name, number, email, job));
+                insertData("'" + name + "'", "'" + number + "'", "'" + email + "'", "'" + job + "'");
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
                 startActivity(intent);
             }
@@ -46,5 +55,13 @@ public class AddActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+
+    private void insertData(String name, String number, String email, String job) {
+        if (database != null) {
+            String sql = "INSERT INTO user VALUES(" + name + ", " + number + ", " + email + ", " + job + ")";
+            database.execSQL(sql);
+        }
     }
 }

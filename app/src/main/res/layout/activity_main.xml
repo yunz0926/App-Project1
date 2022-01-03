@@ -209,7 +209,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/current"
+                android:id="@+id/weather_content"
                 android:orientation="vertical"
                 android:visibility="visible">
 
@@ -220,17 +220,18 @@
                     android:textSize="25dp"
                     android:textStyle="bold"
                     android:layout_gravity="center"
-                    android:id="@+id/current_time"
-                    android:text="current_time"/>
+                    android:textAlignment="center"
+                    android:id="@+id/time"
+                    android:text="time"/>
 
                 <ImageView
-                    android:id="@+id/current_cap"
+                    android:id="@+id/cap"
                     android:layout_marginTop="10dp"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
-                    android:visibility="invisible"
+                    android:visibility="visible"
                     />
 
                 <LinearLayout
@@ -242,164 +243,43 @@
                     >
 
                     <ImageView
-                        android:id="@+id/current_left_glove"
+                        android:id="@+id/left_glove"
                         android:layout_marginTop="25dp"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="45dp"
                         android:adjustViewBounds="true"
-                        android:visibility="invisible"
+                        android:visibility="visible"
                         />
 
                     <ImageView
-                        android:id="@+id/current_cloth"
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/cloth"
+                        android:layout_width="wrap_content"
+                        android:layout_height="250dp"
                         android:adjustViewBounds="true"
-                        android:visibility="invisible"
+                        android:visibility="visible"
                         />
 
                     <ImageView
-                        android:id="@+id/current_right_glove"
+                        android:id="@+id/right_glove"
                         android:layout_marginTop="25dp"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="45dp"
                         android:adjustViewBounds="true"
-                        android:visibility="invisible"
+                        android:visibility="visible"
                         />
                 </LinearLayout>
                 <TextView
-                    android:id="@+id/current_description"
+                    android:id="@+id/description"
+                    android:layout_marginTop="5dp"
                     android:layout_width="350dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:textAlignment="center"
-                    android:textSize="18dp"
-                    android:textColor="#716F81"
+                    android:textSize="34dp"
+                    android:textColor="#797A7E"
+                    android:textStyle="bold"
                     android:padding="10dp"
-                    android:text="해당 시간대의 기온은 0도입니다"
                     />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/three"
-                android:orientation="vertical"
-                android:visibility="invisible">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
-                    android:textSize="25dp"
-                    android:textStyle="bold"
-                    android:layout_gravity="center"
-                    android:id="@+id/three_time"
-                    android:text="three_time"/>
-
-                <ImageView
-                    android:id="@+id/three_cap"
-                    android:layout_marginTop="10dp"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:visibility="invisible"
-                    />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/three_left_glove"
-                        android:layout_marginTop="25dp"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:visibility="invisible"
-                        />
-
-                    <ImageView
-                        android:id="@+id/three_cloth"
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:visibility="invisible"
-                        />
-
-                    <ImageView
-                        android:id="@+id/three_right_glove"
-                        android:layout_marginTop="25dp"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:visibility="invisible"
-                        />
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/six"
-                android:orientation="vertical"
-                android:visibility="invisible">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
-                    android:textSize="25dp"
-                    android:textStyle="bold"
-                    android:layout_gravity="center"
-                    android:id="@+id/six_time"
-                    android:text="six_time"/>
-
-                <ImageView
-                    android:id="@+id/six_cap"
-                    android:layout_marginTop="10dp"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:visibility="invisible"
-                    />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/six_left_glove"
-                        android:layout_marginTop="25dp"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:visibility="invisible"
-                        />
-
-                    <ImageView
-                        android:id="@+id/six_cloth"
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:visibility="invisible"
-                        />
-
-                    <ImageView
-                        android:id="@+id/six_right_glove"
-                        android:layout_marginTop="25dp"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:visibility="invisible"
-                        />
-                </LinearLayout>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
