@@ -211,7 +211,23 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         temp = Math.min(Math.min(temp1, temp2), temp3);
 
         time_text.setText("Today\n" + (current_time) + "H");
-        description.setText(weatherList.get(0).getTemp() + "\u2103\n" + weatherList.get(0).getWeather());
+
+        String weather1 = weatherList.get(0).getWeather();
+        String weather2 = weatherList.get(1).getWeather();
+        String weather3 = weatherList.get(2).getWeather();
+        String mainWeather;
+
+        if(weather1.equals("Snow") || weather2.equals("Snow") || weather3.equals("Snow")){
+            description.setText(temp + "\u2103\nSnow");
+            mainWeather = "Snow";
+        } else if (weather1.equals("Thunderstorm") || weather2.equals("Thunderstorm") || weather3.equals("Thunderstorm")) {
+            description.setText(temp + "\u2103\nThunderstorm");
+            mainWeather = "Thunderstorm";
+        }
+        else {
+            description.setText(temp + "\u2103\n" + weatherList.get(1).getWeather());
+            mainWeather = weatherList.get(1).getWeather();
+        }
 
         if (temp < 0) {
             cap.setVisibility(View.VISIBLE);
@@ -224,12 +240,11 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
             right_glove.setImageResource(R.drawable.right_glove);
             cloth.setImageResource(R.drawable.paka);
         } else if (temp >= 0 && temp < 5) {
-            cap.setVisibility(View.VISIBLE);
+            cap.setVisibility(View.INVISIBLE);
             left_glove.setVisibility(View.INVISIBLE);
             right_glove.setVisibility(View.INVISIBLE);
             cloth.setVisibility(View.VISIBLE);
 
-            cap.setImageResource(R.drawable.white);
             cloth.setImageResource(R.drawable.paka);
         } else if (temp >= 5 && temp < 9) {
             cap.setVisibility(View.INVISIBLE);
@@ -308,10 +323,22 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 else{
                     time_text.setText("Today\n" + (current_time + time) + "H");
                 }
-                if (weatherList.get(time).getWeather() == "Rain") {
-                    description.setText(weatherList.get(time).getTemp() + "\u2103\n" + weatherList.get(time).getWeather());
-                } else {
-                    description.setText(weatherList.get(time).getTemp() + "\u2103\n" + weatherList.get(time).getWeather());
+
+                String weather1 = weatherList.get(time).getWeather();
+                String weather2 = weatherList.get(time + 1).getWeather();
+                String weather3 = weatherList.get(time + 2).getWeather();
+                String mainWeather;
+
+                if(weather1.equals("Snow") || weather2.equals("Snow") || weather3.equals("Snow")){
+                    description.setText(temp + "\u2103\nSnow");
+                    mainWeather = "Snow";
+                } else if (weather1.equals("Thunderstorm") || weather2.equals("Thunderstorm") || weather3.equals("Thunderstorm")) {
+                    description.setText(temp + "\u2103\nThunderstorm");
+                    mainWeather = "Thunderstorm";
+                }
+                else {
+                    description.setText(temp + "\u2103\n" + weatherList.get(time + 1).getWeather());
+                    mainWeather = weatherList.get(time + 1).getWeather();
                 }
 
                 if (temp < 0) {
@@ -325,12 +352,11 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                     right_glove.setImageResource(R.drawable.right_glove);
                     cloth.setImageResource(R.drawable.paka);
                 } else if (temp >= 0 && temp < 5) {
-                    cap.setVisibility(View.VISIBLE);
+                    cap.setVisibility(View.INVISIBLE);
                     left_glove.setVisibility(View.INVISIBLE);
                     right_glove.setVisibility(View.INVISIBLE);
                     cloth.setVisibility(View.VISIBLE);
 
-                    cap.setImageResource(R.drawable.white);
                     cloth.setImageResource(R.drawable.paka);
                 } else if (temp >= 5 && temp < 9) {
                     cap.setVisibility(View.INVISIBLE);
