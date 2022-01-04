@@ -140,7 +140,7 @@ add_item_add_Btn.setOnClickListener(new View.OnClickListener() {
         });
 /-----------------------------------------------------------------------------------------/
 
-![add](https://user-images.githubusercontent.com/80109309/148054822-c44b4d6b-8e66-40da-b401-1f73ca2d0d31.gif)
+![add](https://user-images.githubusercontent.com/80109309/148056438-3aa1c3b0-6dbf-401b-97ab-ba0b357a5c63.gif)
 
 <br/>
 
