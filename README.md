@@ -102,6 +102,8 @@ text_name.setText(name);
 
 ![go_back](https://user-images.githubusercontent.com/80109309/148054564-c438bda2-6dbc-485e-9db1-a601e2abd96c.gif)
 
+![call](https://user-images.githubusercontent.com/80109309/148058442-4454c9dd-8631-4cc4-96bd-5036cb9f7e04.gif)
+
 <br/>
 
 
@@ -316,6 +318,8 @@ Button btn_insert = (Button) findViewById(R.id.btn_insert);
 1. 위치 정보와 openWeatherAPI를 이용해 날씨 정보 가져오기
 2. 3시간동안의 날씨 데이터 처리
 3. 탭을 통해 시간 별 날씨 정보와 해당 날씨에 맞는 옷차림을 보여주기
+
+![KakaoTalk_Image_2022-01-04-21-23-51](https://user-images.githubusercontent.com/80109309/148058572-65a84aa0-2a3e-460b-bc89-b9af3207e485.jpeg)
 
 <br/>
 
