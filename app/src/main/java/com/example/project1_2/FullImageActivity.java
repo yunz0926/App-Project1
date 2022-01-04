@@ -35,7 +35,6 @@ public class FullImageActivity extends Activity {
             imageView.setImageURI((Uri)imageAdapter.mThumblds[position]);
             mAttacher = new PhotoViewAttacher(imageView);
         }
-
     }
 
 }

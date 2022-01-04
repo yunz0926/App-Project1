@@ -141,6 +141,12 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, new LinearLayoutManager(this).getOrientation());
         dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.divider));
 
+        userDatabaseHelper = UserDatabaseHelper.getInstance(this);
+        database = userDatabaseHelper.getWritableDatabase();
+
+        itemList.clear();
+        selectData(TABLE_NAME);
+
         rv = (RecyclerView) findViewById(R.id.main_rv);
         rv.addItemDecoration(dividerItemDecoration);
         llm = new LinearLayoutManager(this);
@@ -156,13 +162,6 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 startActivity(intent);
             }
         });
-
-        userDatabaseHelper = UserDatabaseHelper.getInstance(this);
-        database = userDatabaseHelper.getWritableDatabase();
-
-        itemList.clear();
-        selectData(TABLE_NAME);
-        adapter.notifyDataSetChanged();
 
         rv.setHasFixedSize(true);
         rv.setLayoutManager(llm);
@@ -213,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
         temp = Math.min(Math.min(temp1, temp2), temp3);
 
-        Glide.with(this).load(R.raw.clear).override(200, 200).into(weather_background);
+        Glide.with(this).load(R.raw.clouds).override(200, 200).into(weather_background);
         description.setTextColor(Color.WHITE);
         time_text.setTextColor(Color.WHITE);
 
@@ -236,18 +235,19 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
             Glide.with(this).load(R.raw.rain).override(200, 200).into(weather_background);
         } else {
             mainWeather = weatherList.get(1).getWeather();
-            if(mainWeather.equals("Clear")){
+            if (mainWeather.equals("Clear")) {
                 Glide.with(this).load(R.raw.clear).override(200, 200).into(weather_background);
-            } else if(mainWeather.equals("Drizzle")) {
+            } else if (mainWeather.equals("Drizzle")) {
                 Glide.with(this).load(R.raw.rain).override(200, 200).into(weather_background);
-            } else if(mainWeather.equals("Atmosphere")){
+            } else if (mainWeather.equals("Atmosphere")) {
                 Glide.with(this).load(R.raw.atmosphere).override(200, 200).into(weather_background);
-            } else if(mainWeather.equals("Clouds")){
+            } else if (mainWeather.equals("Clouds")) {
                 Glide.with(this).load(R.raw.clouds).override(200, 200).into(weather_background);
             }
         }
 
-        description.setText(temp + "\u2103\n");
+
+        description.setText(temp + "\u2103\n" + mainWeather);
 
         if (temp < 0) {
             cap.setVisibility(View.VISIBLE);
@@ -530,8 +530,6 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         btn_insert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*imageAdapter.addItem(R.drawable.image17);
-                imageAdapter.notifyDataSetChanged();*/
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
