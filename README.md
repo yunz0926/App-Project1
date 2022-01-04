@@ -19,6 +19,7 @@
 2) database에서 가장 최신의 연락처 정보를 list로 불러온다.
 3) 해당 list를 adapter로 보내서 list 형식으로 이름만 보여준다.
 
+```java
 userDatabaseHelper = UserDatabaseHelper.getInstance(this);
         database = userDatabaseHelper.getWritableDatabase();
 
@@ -33,6 +34,7 @@ userDatabaseHelper = UserDatabaseHelper.getInstance(this);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(llm);
         rv.setAdapter(adapter);
+```
 
 ![contact](https://user-images.githubusercontent.com/80109309/148054706-1af09d37-eb64-4b94-8adf-86901bf7b28f.gif)
 
@@ -54,6 +56,7 @@ userDatabaseHelper = UserDatabaseHelper.getInstance(this);
 8) 직업
 
 /-----------------------------------RvAdapter.java-------------------------------------/
+```java
 public void onBindViewHolder(CustomViewHolder holder, final int position) {
         final Item item = filteredList.get(position);
         holder.name.setText(item.getItem_name());
@@ -70,10 +73,12 @@ public void onBindViewHolder(CustomViewHolder holder, final int position) {
             }
         });
     }
+```
 
 /-----------------------------------------------------------------------------------------/
 
 /-----------------------------------ItemActivity.java-------------------------------------/
+```java
 intent = getIntent();
         name = intent.getStringExtra("name");
         number = intent.getStringExtra("number");
@@ -89,6 +94,7 @@ text_name.setText(name);
         text_number.setText(spannable_number);
         text_email.setText(spannable_email);
         text_job.setText(spannable_job);
+```
 
 /-----------------------------------------------------------------------------------------/
 
@@ -111,6 +117,7 @@ MainActivity.java가 관리하는 activity_main.xml의 '+' 버튼을 누르면 �
 'ADD' 버튼을 눌러서 데이터가 추가되거나 'GO BACK' 버튼을 누르면 메인화면으로 넘어가도록 하였습니다.
 
 /-----------------------------------MainActivity.java-------------------------------------/
+```java
 Button add_Btn = (Button) findViewById(R.id.add_Btn);
         add_Btn.setOnClickListener(new View.OnCli
         ckListener() {
@@ -119,9 +126,11 @@ Button add_Btn = (Button) findViewById(R.id.add_Btn);
                 startActivity(intent);
             }
         });
+```
 /-----------------------------------------------------------------------------------------/
 
 /-----------------------------------AddActivity.java-------------------------------------/
+```java
 add_item_add_Btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 name = add_name.getText().toString();
@@ -138,6 +147,7 @@ add_item_add_Btn.setOnClickListener(new View.OnClickListener() {
                 Toast.makeText(v.getContext(), "added", Toast.LENGTH_SHORT).show();
             }
         });
+```
 /-----------------------------------------------------------------------------------------/
 
 ![add](https://user-images.githubusercontent.com/80109309/148056438-3aa1c3b0-6dbf-401b-97ab-ba0b357a5c63.gif)
@@ -149,6 +159,7 @@ add_item_add_Btn.setOnClickListener(new View.OnClickListener() {
 연락처 세부 정보를 보여주는 page에서 'DELETE' 버튼을 터치하면 database에서 연락처 정보를 삭제한 다음 메인 화면으로 넘어간다
 
 /-----------------------------------ItemActivity.java-------------------------------------/
+```java
 Button deleteBtn = findViewById(R.id.delete_btn);
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -158,6 +169,7 @@ Button deleteBtn = findViewById(R.id.delete_btn);
                 Toast.makeText(v.getContext(), "deleted", Toast.LENGTH_SHORT).show();
             }
         });
+```
 /-----------------------------------------------------------------------------------------/
 
 ![delete](https://user-images.githubusercontent.com/80109309/148054875-a66553b9-322c-4fc2-91f4-6ccb5e3778c8.gif)
