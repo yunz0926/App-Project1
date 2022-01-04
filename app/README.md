@@ -1,5 +1,177 @@
 # readme
 
+# 1. 연락처
+
+### 주요기능
+1. 연락처 불러오기
+2. 연락처 세부정보 보여주기
+3. 연락처 추가하기
+4. 연락처 삭제하기
+5. 연락처 검색하기
+
+<br/>
+
+### 1. 연락처 불러오기
+
+앱이 종료되어도 연락처 정보를 저장하는 database를 구현하기 위해서 SQLiteOpenHelper class를 사용했습니다.
+또한 연락처를 list로 보여주기 위해 ArrayList 객체를 사용해 recyclerview를 통해 보여주었습니다.
+1) 메인 화면이 실행될 때마다 연락처 정보가 담긴 list를 초기화시킨다.
+2) database에서 가장 최신의 연락처 정보를 list로 불러온다.
+3) 해당 list를 adapter로 보내서 list 형식으로 이름만 보여준다.
+
+userDatabaseHelper = UserDatabaseHelper.getInstance(this);
+        database = userDatabaseHelper.getWritableDatabase();
+
+        itemList.clear();
+        selectData(TABLE_NAME);
+
+        rv = (RecyclerView) findViewById(R.id.main_rv);
+        rv.addItemDecoration(dividerItemDecoration);
+        llm = new LinearLayoutManager(this);
+        adapter = new RvAdapter(this, itemList);
+
+        rv.setHasFixedSize(true);
+        rv.setLayoutManager(llm);
+        rv.setAdapter(adapter);
+
+![contact](https://user-images.githubusercontent.com/80109309/148054706-1af09d37-eb64-4b94-8adf-86901bf7b28f.gif)
+
+<br/>
+
+### 2. 연락처 세부정보 보여주기
+
+<메인 화면 --> 연락처 세부 정보 보여주는 page로 넘어가기
+연락처 정보 중 이름 정보만 보여주는 list에서 보고싶은 연락처를 터치하면 ItemActivity.java가 관리하는 item_detail.xml로 넘어가도록 하였습니다. 이때 onClick 함수와 Intent 객체 및 startActivity 함수를 사용하였습니다.
+
+<연락처 세부 정보 보여주는 page>
+1) 'GO BACK' 버튼  --> 메인 화면으로 넘어간다
+2) 'DELETE' 버튼   --> 해당 연락처를 삭제하고 메인 화면으로 넘어간다
+3) 기본 프로필
+4) 이름
+5) 전화 버튼        --> 전화할 수 있는 앱으로 넘어간다
+6) 전화번호
+7) 이메일
+8) 직업
+
+/-----------------------------------RvAdapter.java-------------------------------------/
+public void onBindViewHolder(CustomViewHolder holder, final int position) {
+        final Item item = filteredList.get(position);
+        holder.name.setText(item.getItem_name());
+
+        holder.card.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                intent = new Intent(v.getContext(), ItemActivity.class);
+                intent.putExtra("name", item.getItem_name());
+                intent.putExtra("number", item.getItem_number());
+                intent.putExtra("email", item.getItem_email());
+                intent.putExtra("job", item.getItem_job());
+                v.getContext().startActivity(intent);
+                Toast.makeText(v.getContext(), "clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+/-----------------------------------------------------------------------------------------/
+
+/-----------------------------------ItemActivity.java-------------------------------------/
+intent = getIntent();
+        name = intent.getStringExtra("name");
+        number = intent.getStringExtra("number");
+        email = intent.getStringExtra("email");
+        job = intent.getStringExtra("job");
+
+text_name = findViewById(R.id.item_detail_name);
+        text_number = findViewById(R.id.item_detail_number);
+        text_email = findViewById(R.id.item_detail_email);
+        text_job = findViewById(R.id.item_detail_job);
+
+text_name.setText(name);
+        text_number.setText(spannable_number);
+        text_email.setText(spannable_email);
+        text_job.setText(spannable_job);
+
+/-----------------------------------------------------------------------------------------/
+
+![detail_item](https://user-images.githubusercontent.com/80109309/148054775-db9ae37b-9655-426e-a288-17df3a8b06cf.gif)
+
+![go_back](https://user-images.githubusercontent.com/80109309/148054564-c438bda2-6dbc-485e-9db1-a601e2abd96c.gif)
+
+<br/>
+
+
+### 3. 연락처 추가하기
+
+<메인 화면 --> 연락처를 추가하는 page로 넘어가기>
+MainActivity.java가 관리하는 activity_main.xml의 '+' 버튼을 누르면 메인 화면으로 넘어가도록 하였습니다. 이때 onClick 함수와 Intent 객체 및 startActivity 함수를 사용하였습니다.
+
+<연락처를 추가하는 page에서 연락처 추가하기>
+핸드폰의 앱이 종료되어도 연락처가 저장이 될 수 있도록 SQLiteOpenHelper class를 사용해서 database를 구현하였습니다. 연락처를 추가하는 page(add_item.xml)에서 이름(name), 전화번호(number), 이메일(email), 직업(job)을 입력하고 'ADD' 버튼을 누르면 database에 해당 정보들이 저장이 되고 다시 MainActivity.java가 관리하는 activity_main.xml로 돌아오도록 하였습니다.
+
+<연락처를 추가하는 page --> 메인 화면>
+'ADD' 버튼을 눌러서 데이터가 추가되거나 'GO BACK' 버튼을 누르면 메인화면으로 넘어가도록 하였습니다.
+
+/-----------------------------------MainActivity.java-------------------------------------/
+Button add_Btn = (Button) findViewById(R.id.add_Btn);
+        add_Btn.setOnClickListener(new View.OnCli
+        ckListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), AddActivity.class);
+                startActivity(intent);
+            }
+        });
+/-----------------------------------------------------------------------------------------/
+
+/-----------------------------------AddActivity.java-------------------------------------/
+add_item_add_Btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                name = add_name.getText().toString();
+                number = (String) add_number.getText().toString();
+                email = add_email.getText().toString();
+                job = add_job.getText().toString();
+                if (name.equals("")) {
+                    insertData("'" + number + "'", "'" + number + "'", "'" + email + "'", "'" + job + "'");
+                } else {
+                    insertData("'" + name + "'", "'" + number + "'", "'" + email + "'", "'" + job + "'");
+                }
+                Intent intent = new Intent(v.getContext(), MainActivity.class);
+                startActivity(intent);
+                Toast.makeText(v.getContext(), "added", Toast.LENGTH_SHORT).show();
+            }
+        });
+/-----------------------------------------------------------------------------------------/
+
+![add](https://user-images.githubusercontent.com/80109309/148054822-c44b4d6b-8e66-40da-b401-1f73ca2d0d31.gif)
+
+<br/>
+
+### 4. 연락처 삭제하기
+
+연락처 세부 정보를 보여주는 page에서 'DELETE' 버튼을 터치하면 database에서 연락처 정보를 삭제한 다음 메인 화면으로 넘어간다
+
+/-----------------------------------ItemActivity.java-------------------------------------/
+Button deleteBtn = findViewById(R.id.delete_btn);
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                deleteData(name, number, email, job);
+                Intent intent = new Intent(v.getContext(), MainActivity.class);
+                startActivity(intent);
+                Toast.makeText(v.getContext(), "deleted", Toast.LENGTH_SHORT).show();
+            }
+        });
+/-----------------------------------------------------------------------------------------/
+
+![delete](https://user-images.githubusercontent.com/80109309/148054875-a66553b9-322c-4fc2-91f4-6ccb5e3778c8.gif)
+
+<br/>
+
+### 5. 연락처 검색하기
+
+메인 화면에서 'search' 부분을 클릭하면 이름 정보를 통해 연락처를 검색할 수 있습니다.
+
+![search](https://user-images.githubusercontent.com/80109309/148054926-14b706f0-f52e-466a-a270-5eaad4c19508.gif)
+
+<br/>
+
 # 2. 갤러리
 ### 주요기능
 1. GridView를 이용한 썸네일 보여주기
