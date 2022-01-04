@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -86,7 +88,8 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     LinearLayout contact;
     ConstraintLayout gallery;
     ConstraintLayout weather;
-    LinearLayout weather_content;
+    FrameLayout weather_content;
+    ImageView weather_background;
 
     private TextView time_text, description;
     private ImageView cap, left_glove, right_glove, cloth;
@@ -124,8 +127,8 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         contact = (LinearLayout) findViewById(R.id.contact);
         gallery = (ConstraintLayout) findViewById(R.id.gallery);
         weather = (ConstraintLayout) findViewById(R.id.weather);
-        weather_content = (LinearLayout) findViewById(R.id.weather_content);
-
+        weather_content = (FrameLayout) findViewById(R.id.weather_content);
+        weather_background = (ImageView) findViewById(R.id.weatherBackground);
 
         //탭 1
         contact.setOnTouchListener(new View.OnTouchListener() {
@@ -210,6 +213,10 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
         temp = Math.min(Math.min(temp1, temp2), temp3);
 
+        Glide.with(this).load(R.raw.clear).override(200, 200).into(weather_background);
+        description.setTextColor(Color.WHITE);
+        time_text.setTextColor(Color.WHITE);
+
         time_text.setText("Today\n" + (current_time) + "H");
 
         String weather1 = weatherList.get(0).getWeather();
@@ -218,16 +225,29 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         String mainWeather;
 
         if(weather1.equals("Snow") || weather2.equals("Snow") || weather3.equals("Snow")){
-            description.setText(temp + "\u2103\nSnow");
             mainWeather = "Snow";
+            Glide.with(this).load(R.raw.snow).override(200, 200).into(weather_background);
+
         } else if (weather1.equals("Thunderstorm") || weather2.equals("Thunderstorm") || weather3.equals("Thunderstorm")) {
-            description.setText(temp + "\u2103\nThunderstorm");
             mainWeather = "Thunderstorm";
-        }
-        else {
-            description.setText(temp + "\u2103\n" + weatherList.get(1).getWeather());
+            Glide.with(this).load(R.raw.thunderstorm).override(200, 200).into(weather_background);
+        } else if (weather1.equals("Rain") || weather2.equals("Rain") || weather3.equals("Rain")) {
+            mainWeather = "Rain";
+            Glide.with(this).load(R.raw.rain).override(200, 200).into(weather_background);
+        } else {
             mainWeather = weatherList.get(1).getWeather();
+            if(mainWeather.equals("Clear")){
+                Glide.with(this).load(R.raw.clear).override(200, 200).into(weather_background);
+            } else if(mainWeather.equals("Drizzle")) {
+                Glide.with(this).load(R.raw.rain).override(200, 200).into(weather_background);
+            } else if(mainWeather.equals("Atmosphere")){
+                Glide.with(this).load(R.raw.atmosphere).override(200, 200).into(weather_background);
+            } else if(mainWeather.equals("Clouds")){
+                Glide.with(this).load(R.raw.clouds).override(200, 200).into(weather_background);
+            }
         }
+
+        description.setText(temp + "\u2103\n");
 
         if (temp < 0) {
             cap.setVisibility(View.VISIBLE);
@@ -310,6 +330,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                         e.printStackTrace();
                     }
                 };
+
                 time = pos * 3;
                 int temp1 = weatherList.get(time).getTemp();
                 int temp2 = weatherList.get(time + 1).getTemp();
@@ -330,16 +351,29 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 String mainWeather;
 
                 if(weather1.equals("Snow") || weather2.equals("Snow") || weather3.equals("Snow")){
-                    description.setText(temp + "\u2103\nSnow");
                     mainWeather = "Snow";
+                    Glide.with(MainActivity.this).load(R.raw.snow).override(200, 200).into(weather_background);
+
                 } else if (weather1.equals("Thunderstorm") || weather2.equals("Thunderstorm") || weather3.equals("Thunderstorm")) {
-                    description.setText(temp + "\u2103\nThunderstorm");
                     mainWeather = "Thunderstorm";
+                    Glide.with(MainActivity.this).load(R.raw.thunderstorm).override(200, 200).into(weather_background);
+                } else if (weather1.equals("Rain") || weather2.equals("Rain") || weather3.equals("Rain")) {
+                    mainWeather = "Rain";
+                    Glide.with(MainActivity.this).load(R.raw.rain).override(200, 200).into(weather_background);
+                } else {
+                    mainWeather = weather2;
+                    if(mainWeather.equals("Clear")){
+                        Glide.with(MainActivity.this).load(R.raw.clear).override(200, 200).into(weather_background);
+                    } else if(mainWeather.equals("Drizzle")) {
+                        Glide.with(MainActivity.this).load(R.raw.rain).override(200, 200).into(weather_background);
+                    } else if(mainWeather.equals("Atmosphere")){
+                        Glide.with(MainActivity.this).load(R.raw.atmosphere).override(200, 200).into(weather_background);
+                    } else if(mainWeather.equals("Clouds")){
+                        Glide.with(MainActivity.this).load(R.raw.clouds).override(200, 200).into(weather_background);
+                    }
                 }
-                else {
-                    description.setText(temp + "\u2103\n" + weatherList.get(time + 1).getWeather());
-                    mainWeather = weatherList.get(time + 1).getWeather();
-                }
+
+                description.setText(temp + "\u2103\n"+mainWeather);
 
                 if (temp < 0) {
                     cap.setVisibility(View.VISIBLE);
@@ -408,8 +442,6 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
                     cloth.setImageResource(R.drawable.c_28);
                 }
-
-
             }
 
             @Override

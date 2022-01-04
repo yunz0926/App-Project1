@@ -219,7 +219,7 @@
 
             </com.google.android.material.tabs.TabLayout>
 
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -228,13 +228,25 @@
                 android:id="@+id/weather_content"
                 android:orientation="vertical"
                 android:visibility="visible">
-
+                <ImageView
+                    android:id="@+id/weatherBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="680dp"
+                    android:adjustViewBounds="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="60dp"
                     android:textSize="25dp"
-                    android:textStyle="bold"
                     android:layout_gravity="center"
                     android:textAlignment="center"
                     android:id="@+id/time"
@@ -300,12 +312,11 @@
                     app:layout_constraintRight_toRightOf="parent"
                     android:textSize="34dp"
                     android:textColor="#797A7E"
-                    android:textStyle="bold"
                     android:padding="10dp"
-                    android:background="#ffffff"
                     android:fontFamily="@font/first"
                     />
             </LinearLayout>
+            </FrameLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
